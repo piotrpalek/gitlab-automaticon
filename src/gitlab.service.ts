@@ -4,6 +4,9 @@ import { fetchFromGitlab, createGitlab, updateGitlab } from './requests';
 import { ChangelogLine } from './description.service';
 import { parseISO, isAfter } from 'date-fns';
 
+// const projId = process.env.FRONTEND_PROJ_ID;
+const projId = process.env.DOCUMENTS_PROJ_ID;
+
 export async function getOrCreatePr() {
   class NoPrOpenError extends Error {}
 
@@ -56,8 +59,7 @@ export async function getLastMergedAtDate() {
 }
 
 function getOpenPrs() {
-  const frontendProjId = '13323979';
-  const lastMergedToMasterURL = `https://gitlab.com/api/v4/projects/${frontendProjId}/merge_requests`;
+  const lastMergedToMasterURL = `https://gitlab.com/api/v4/projects/${projId}/merge_requests`;
 
   console.log('Getting open PRs..');
   return fetchFromGitlab(lastMergedToMasterURL, {
@@ -69,8 +71,7 @@ function getOpenPrs() {
 }
 
 export async function getMergedAfterPrs(updatedAfter: any) {
-  const frontendProjId = '13323979';
-  const lastMergedToMasterURL = `https://gitlab.com/api/v4/projects/${frontendProjId}/merge_requests`;
+  const lastMergedToMasterURL = `https://gitlab.com/api/v4/projects/${projId}/merge_requests`;
 
   console.log('Getting merged after PRs..', { updatedAfter });
   const mergedPrs = await fetchFromGitlab(lastMergedToMasterURL, {
@@ -88,24 +89,21 @@ export async function getMergedAfterPrs(updatedAfter: any) {
 }
 
 async function createPr(payload: any) {
-  const frontendProjId = '13323979';
-  const updatePrUrl = `https://gitlab.com/api/v4/projects/${frontendProjId}/merge_requests`;
+  const updatePrUrl = `https://gitlab.com/api/v4/projects/${projId}/merge_requests`;
 
   console.log('Creating PR...', { url: updatePrUrl, payload });
   return createGitlab(updatePrUrl, payload);
 }
 
 export async function updatePr(payload: any) {
-  const frontendProjId = '13323979';
-  const updatePrUrl = `https://gitlab.com/api/v4/projects/${frontendProjId}/merge_requests/${payload.iid}`;
+  const updatePrUrl = `https://gitlab.com/api/v4/projects/${projId}/merge_requests/${payload.iid}`;
 
   console.log('Updating PR...');
   return updateGitlab(updatePrUrl, payload);
 }
 
 export function getLastMergedPrs() {
-  const frontendProjId = '13323979';
-  const lastMergedToMasterURL = `https://gitlab.com/api/v4/projects/${frontendProjId}/merge_requests`;
+  const lastMergedToMasterURL = `https://gitlab.com/api/v4/projects/${projId}/merge_requests`;
 
   // console.log('Getting last merged pr..');
   return fetchFromGitlab(lastMergedToMasterURL, {
