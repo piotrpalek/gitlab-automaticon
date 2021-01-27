@@ -1,6 +1,6 @@
 import { getLastMergedAtDate, getMergedAfterPrs } from './gitlab.service';
 import { getTpEntities } from './tp.service';
-import { writeText, matchTargetProcessPr, logDebug } from './utils';
+import { writeText, matchTargetProcessPr, logDebug, logDebugBreak } from './utils';
 import { debuglog } from 'util';
 
 export interface PullRequestMetadata {
@@ -25,6 +25,7 @@ export interface TpEntity {
 
 export async function getChangelog() {
   const metadata = await getPullRequestsMetadata();
+  // logDebugBreak({ metadata });
   return getChangelogFromMetadata(metadata);
 }
 

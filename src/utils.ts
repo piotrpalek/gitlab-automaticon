@@ -22,3 +22,8 @@ export function matchReleaseTitle(prTitle: string) {
 export function logDebug(obj: any) {
   console.log(util.inspect(obj, { showHidden: false, depth: null }));
 }
+
+export function logDebugBreak(obj: any) {
+  logDebug(obj);
+  process.exit();
+}
