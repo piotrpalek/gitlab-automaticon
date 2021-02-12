@@ -147,7 +147,7 @@ export async function getLastReleasePr() {
 
 export async function handlePrChangelog(title: string, changelogMetadata: ChangelogLine[]) {
   const prChangelog = getPrChangelog(changelogMetadata);
-  const tableHeader = '| PR | Description |\n| ------ | ------ |';
+  const tableHeader = '| PR | Target Process |\n| ------ | ------ |';
   const prDescription = `# Changes\n\n${tableHeader}\n${prChangelog}`;
 
   const { id, iid } = await getOrCreatePr();
@@ -160,8 +160,8 @@ export async function handlePrChangelog(title: string, changelogMetadata: Change
   };
 
   // console.log({ updatePayload });
-  writeText('debug.txt', prDescription);
-  throw new Error();
+  // writeText('debug.txt', prDescription);
+  // throw new Error();
 
   const updateResponse = await updatePr(updatePayload);
   console.log('PR updated: ', updateResponse && updateResponse.title);
@@ -172,12 +172,26 @@ function getPrChangelog(changelogMetadata: ChangelogLine[]) {
   const otherPrs = [];
 
   for (const changelogLine of changelogMetadata) {
-    if (changelogLine.tpEntityId) {
-      const line = `| [${changelogLine.prId} - ${changelogLine.prTitle}](https://gitlab.com/accounto/frontend/frontend-app/-/merge_requests/${changelogLine.prId}) | [${changelogLine.tpEntityId} - ${changelogLine.tpEntityTitle}](${changelogLine.tpEntityUrl}) |`;
-      prsWithTargetProcess.push(line);
+    const line = [];
+
+    line.push(`| [${changelogLine.prTitle}](https://gitlab.com/accounto/frontend/frontend-app/-/merge_requests/${changelogLine.prId}) `);
+
+    if (changelogLine.tpEntities.length) {
+      const tpEntityLinks = changelogLine.tpEntities.map((tpEntity) => {
+        return `[${tpEntity.title}](${tpEntity.url})`;
+      });
+
+      line.push(`| ${tpEntityLinks.join(', ')} |`);
     } else {
-      const line = `| [${changelogLine.prId} - ${changelogLine.prTitle}](https://gitlab.com/accounto/frontend/frontend-app/-/merge_requests/${changelogLine.prId}) | |`;
-      otherPrs.push(line);
+      line.push('| |');
+    }
+
+    const lineString = line.join('');
+
+    if (changelogLine.tpEntities.length) {
+      prsWithTargetProcess.push(lineString);
+    } else {
+      otherPrs.push(lineString);
     }
   }
 

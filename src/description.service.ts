@@ -8,13 +8,17 @@ export interface PullRequestMetadata {
   tpEntities: TpEntity[] | undefined;
 }
 
+interface EntityChangelogData {
+  id?: string;
+  url?: string;
+  title?: string;
+}
+
 export interface ChangelogLine {
   prId: string;
   prTitle: string;
   prMergeDate: string;
-  tpEntityId?: string;
-  tpEntityUrl?: string;
-  tpEntityTitle?: string;
+  tpEntities: EntityChangelogData[];
 }
 
 export interface TpEntity {
@@ -57,24 +61,24 @@ function getChangelogFromMetadata(prsMetadata: PullRequestMetadata[]): Changelog
 
   for (const prMetadata of prsMetadata) {
     if (prMetadata.tpEntities && prMetadata.tpEntities.length) {
-      for (const tpEntity of prMetadata.tpEntities) {
-        const tpEntityUrl = `https://targets.accounto.ch/entity/${tpEntity.id}`;
-        const changelogLine: ChangelogLine = {
-          prId: prMetadata.gitlabMr.iid,
-          prTitle: prMetadata.gitlabMr.title,
-          prMergeDate: prMetadata.gitlabMr.merged_at,
-          tpEntityId: String(tpEntity.id),
-          tpEntityTitle: tpEntity.name,
-          tpEntityUrl,
-        };
+      const changelogLine: ChangelogLine = {
+        prId: prMetadata.gitlabMr.iid,
+        prTitle: prMetadata.gitlabMr.title,
+        prMergeDate: prMetadata.gitlabMr.merged_at,
+        tpEntities: prMetadata.tpEntities.map((tpEntity) => ({
+          id: String(tpEntity.id),
+          title: tpEntity.name,
+          url: `https://targets.accounto.ch/entity/${tpEntity.id}`,
+        })),
+      };
 
-        changelogLines.push(changelogLine);
-      }
+      changelogLines.push(changelogLine);
     } else {
       const changelogLine: ChangelogLine = {
         prId: prMetadata.gitlabMr.iid,
         prTitle: prMetadata.gitlabMr.title,
         prMergeDate: prMetadata.gitlabMr.merged_at,
+        tpEntities: [],
       };
 
       changelogLines.push(changelogLine);
