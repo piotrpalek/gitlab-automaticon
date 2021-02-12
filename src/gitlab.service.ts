@@ -147,7 +147,8 @@ export async function getLastReleasePr() {
 
 export async function handlePrChangelog(title: string, changelogMetadata: ChangelogLine[]) {
   const prChangelog = getPrChangelog(changelogMetadata);
-  const prDescription = `# Changes \n\n${prChangelog}`;
+  const tableHeader = '| PR | Description |\n| ------ | ------ |';
+  const prDescription = `# Changes\n\n${tableHeader}\n${prChangelog}`;
 
   const { id, iid } = await getOrCreatePr();
 
@@ -159,22 +160,29 @@ export async function handlePrChangelog(title: string, changelogMetadata: Change
   };
 
   // console.log({ updatePayload });
+  // writeText('debug.txt', prDescription);
+  // throw new Error();
 
   const updateResponse = await updatePr(updatePayload);
   console.log('PR updated: ', updateResponse && updateResponse.title);
 }
 
 function getPrChangelog(changelogMetadata: ChangelogLine[]) {
-  const gitlabChangelogLines = changelogMetadata.map((changelogLine) => {
+  const prsWithTargetProcess = [];
+  const otherPrs = [];
+
+  for (const changelogLine of changelogMetadata) {
     if (changelogLine.tpEntityId) {
-      return `- [${changelogLine.tpEntityId} - ${changelogLine.tpEntityTitle}](${changelogLine.tpEntityUrl}) | Pr: !${changelogLine.prId}`;
+      const line = `| !${changelogLine.prId} | [${changelogLine.tpEntityId} - ${changelogLine.tpEntityTitle}](${changelogLine.tpEntityUrl}) |`;
+      prsWithTargetProcess.push(line);
     } else {
-      return `- ${changelogLine.prTitle} | Pr: !${changelogLine.prId}`;
+      const line = `| !${changelogLine.prId} | ${changelogLine.prTitle} |`;
+      otherPrs.push(line);
     }
-  });
+  }
 
   // logDebug({ gitlabChangelogLines });
-  return gitlabChangelogLines.join('\n');
+  return [...prsWithTargetProcess, ...otherPrs].join('\n');
 }
 
 async function correctTitleIfNeeded(prTitle: string, prIID: string) {
