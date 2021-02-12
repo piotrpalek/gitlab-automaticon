@@ -160,8 +160,8 @@ export async function handlePrChangelog(title: string, changelogMetadata: Change
   };
 
   // console.log({ updatePayload });
-  // writeText('debug.txt', prDescription);
-  // throw new Error();
+  writeText('debug.txt', prDescription);
+  throw new Error();
 
   const updateResponse = await updatePr(updatePayload);
   console.log('PR updated: ', updateResponse && updateResponse.title);
@@ -173,10 +173,10 @@ function getPrChangelog(changelogMetadata: ChangelogLine[]) {
 
   for (const changelogLine of changelogMetadata) {
     if (changelogLine.tpEntityId) {
-      const line = `| !${changelogLine.prId} | [${changelogLine.tpEntityId} - ${changelogLine.tpEntityTitle}](${changelogLine.tpEntityUrl}) |`;
+      const line = `| [${changelogLine.prId} - ${changelogLine.prTitle}](https://gitlab.com/accounto/frontend/frontend-app/-/merge_requests/${changelogLine.prId}) | [${changelogLine.tpEntityId} - ${changelogLine.tpEntityTitle}](${changelogLine.tpEntityUrl}) |`;
       prsWithTargetProcess.push(line);
     } else {
-      const line = `| !${changelogLine.prId} | ${changelogLine.prTitle} |`;
+      const line = `| [${changelogLine.prId} - ${changelogLine.prTitle}](https://gitlab.com/accounto/frontend/frontend-app/-/merge_requests/${changelogLine.prId}) | |`;
       otherPrs.push(line);
     }
   }
