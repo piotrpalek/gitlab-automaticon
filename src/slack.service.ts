@@ -9,7 +9,15 @@ export function handleSlackChangelog(title: string, changelogMetadata: Changelog
 }
 
 function getSlackChangelog(changelogMetadata: ChangelogLine[]) {
-  const changelogLines = changelogMetadata.map((changelogLine) => {
+  const withoutDuplicates = changelogMetadata.filter((line, index, self) => {
+    if (!line.tpEntityId) {
+      return true;
+    }
+
+    return index === self.findIndex((l) => l.tpEntityId === line.tpEntityId);
+  });
+
+  const changelogLines = withoutDuplicates.map((changelogLine) => {
     // const slackLines = tpEntities.map((entity: any) => {
     //   const id = entity.id;
     //   const name = entity.name;

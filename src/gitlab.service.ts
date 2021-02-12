@@ -84,7 +84,7 @@ export async function getMergedAfterPrs(updatedAfter: any) {
 
   console.log('Getting merged after PRs..', { updatedAfter });
   const mergedPrs = await fetchFromGitlab(lastMergedToMasterURL, {
-    per_page: 100,
+    per_page: 200,
     state: 'merged',
     updated_after: updatedAfter,
   });

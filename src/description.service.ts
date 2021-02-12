@@ -57,9 +57,7 @@ function getChangelogFromMetadata(prsMetadata: PullRequestMetadata[]): Changelog
 
   for (const prMetadata of prsMetadata) {
     if (prMetadata.tpEntities && prMetadata.tpEntities.length) {
-      const tpEntities = prMetadata.tpEntities;
-
-      for (const tpEntity of tpEntities) {
+      for (const tpEntity of prMetadata.tpEntities) {
         const tpEntityUrl = `https://targets.accounto.ch/entity/${tpEntity.id}`;
         const changelogLine: ChangelogLine = {
           prId: prMetadata.gitlabMr.iid,
