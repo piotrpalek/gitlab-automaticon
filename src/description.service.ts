@@ -34,7 +34,7 @@ export async function getPullRequestsMetadata(): Promise<PullRequestMetadata[]> 
   const mergedPrs = await getMergedAfterPrs(mergedAt);
   const pullRequestsMetadata: PullRequestMetadata[] = [];
 
-  // logDebug({ mergedPrs: mergedPrs.map((pr: any) => pr.merged_at), mergedAt });
+  // logDebug({ mergedPrs: mergedPrs.map((pr: any) => pr.title), mergedAt });
 
   for (const mergedPr of mergedPrs) {
     const tpIds = findTpEntityIds(mergedPr.title);
@@ -91,7 +91,9 @@ function findTpEntityIds(title: any): string[] {
   let tpEntityIds: any = [];
 
   const tpIdMatches = Array.from(title.matchAll(/#([\d]+)/g));
+  // console.log({ tpIdMatches });
   const tpIdsFromMatches = tpIdMatches.map((match: any) => match && match[1]).filter((identity) => identity);
+  // console.log({ tpIdsFromMatches });
 
   if (tpIdsFromMatches && tpIdsFromMatches.length) {
     tpEntityIds = [...tpEntityIds, ...tpIdsFromMatches];

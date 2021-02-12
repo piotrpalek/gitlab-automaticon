@@ -6,7 +6,7 @@ import { parseISO, isAfter } from 'date-fns';
 
 function projId() {
   let projId;
-  // projId = process.env.FRONTEND_PROJ_ID;
+  projId = process.env.FRONTEND_PROJ_ID;
   // projId = process.env.DOCUMENTS_PROJ_ID;
 
   if (!projId) {
@@ -84,11 +84,12 @@ export async function getMergedAfterPrs(updatedAfter: any) {
 
   console.log('Getting merged after PRs..', { updatedAfter });
   const mergedPrs = await fetchFromGitlab(lastMergedToMasterURL, {
+    per_page: 100,
     state: 'merged',
     updated_after: updatedAfter,
   });
 
-  // console.log({ mergedPrs });
+  // logDebug({ mergedBeforeFilter: mergedPrs.map((pr: any) => pr.title) });
 
   return mergedPrs.filter((pr: any) => {
     const updatedAfterDate = parseISO(updatedAfter);

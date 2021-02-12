@@ -31,9 +31,9 @@ function getTpEntitiesChangelog(prsWithMetadata: any) {
 }
 
 export function getTpEntities(rawEntityIds: string[] = []) {
-  //console.log(rawEntityIds);
+  // console.log({ rawEntityIds });
   const entityIds = rawEntityIds.filter((identity) => identity);
-  //console.log(entityIds);
+  // console.log({ entityIds });
   const entityIdsQuery = entityIds.join();
   const entitiesByIdsUrl = `https://targets.accounto.ch/api/v2/General`;
 
